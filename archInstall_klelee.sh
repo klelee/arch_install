@@ -1,6 +1,7 @@
 #!/bin/bash
 
 function set_mirrorlist {
+    systemctl stop reflector
 	echo "Server = https://mirrors.ustc.edu.cn/archlinux/\$repo/os/\$arch" > /etc/pacman.d/mirrorlist
 	echo "set mirrorlist ok!"
 	sleep 1
@@ -93,8 +94,11 @@ function archroot {
 	echo "Set Root password"
 	arch-chroot /mnt /bin/bash -c "passwd && useradd --create-home $uname && echo 'set user password' && passwd $uname && groupadd sudo && gpasswd -a $uname sudo && EDITOR=vim visudo && exit"
 
+    echo -e "Set user sudo..."
+    arch-chroot /mnt /bin/bash -c "usermod -aG wheel,users,storage,power,lp,adm,optical $uname && exit"
+
     echo -e "enabling openssh services...\n"
-	arch-chroot /mnt /bin/bash -c "systemctl enable openssh && exit"
+	arch-chroot /mnt /bin/bash -c "systemctl enable sshd && exit"
 
 	echo -e "enabling services...\n"
 	arch-chroot /mnt /bin/bash -c "systemctl enable NetworkManager && exit"
