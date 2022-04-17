@@ -1,17 +1,4 @@
 #!/bin/bash
-#
-
-function cont {
-        read -r -p "[SUCCESS] Continue to next step? [Y/n] " contin
-        case $continue in
-                [Nn][oO]|[nN] )
-                        exit
-                        ;;
-                *)
-                        ;;
-        esac
-
-}
 
 function set_mirrorlist {
 	echo "Server = https://mirrors.ustc.edu.cn/archlinux/\$repo/os/\$arch" > /etc/pacman.d/mirrorlist
@@ -39,7 +26,6 @@ function partion {
 		*)
 			;;
 	esac
-	cont
 }
 
 function fs_format {
@@ -60,14 +46,12 @@ function fs_format {
 		*)
 			;;
 	esac
-	cont
 }
 
 function base_install {
 	echo "Starting installation of packages in selected root drive..."
 	sleep 1
-	pacstrap /mnt \
-				base diffutils linux linux-firmware logrotate usbutils which base-devel networkmanager sudo bash-completion git vim exfat-utils ntfs-3g grub os-prober efibootmgr pacman-contrib intel-ucode\    
+	pacstrap /mnt base diffutils linux linux-firmware logrotate usbutils which base-devel networkmanager sudo bash-completion git vim exfat-utils ntfs-3g grub os-prober efibootmgr pacman-contrib intel-ucode openssh
                 # base：ArchLinux 运行所需的基础软件包集合
 				# diffutils:用来更新RecyclerView的工具，使用DiffUtils可以代替手动刷新RecyclerView
 				# linux:Linux 内核
@@ -78,7 +62,7 @@ function base_install {
 				# base-devel:常用的开发工具
 				# 网络管理器
 				# sudo 用于普通用户获取 root 权限
-				# bash-completion支持bash自动补齐
+				# /bin/bash-completion支持/bin/bash自动补齐
 				# git分布式代码管理工具
 				# vim最强的文本编辑器
 				# exfat-utils:exfat 文件系统支持
@@ -89,13 +73,11 @@ function base_install {
 				# pacman-contrib:pacman 包管理器使用脚本
 				# intel-ucode：Intel 的 CPU 微码更新，用于修补 CPU 漏洞。
 	genfstab -U /mnt >> /mnt/etc/fstab
-	cont
 }
 
 function install_grub {
 	echo -e "Installing GRUB.."
-	arch-chroot /mnt bash -c "grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=Arch && grub-mkconfig -o /boot/grub/grub.cfg && exit"
-	cont
+	arch-chroot /mnt /bin/bash -c "grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=Arch && grub-mkconfig -o /boot/grub/grub.cfg && exit"
 }
 
 function archroot {
@@ -103,45 +85,45 @@ function archroot {
 	read -r -p "Enter the hostname: " hname
 
 	echo -e "Setting up Region and Language\n"
-	arch-chroot /mnt bash -c "ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && hwclock --systohc && sed -i 's/#en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen && sed -i 's/#zh_CN.UTF-8/zh_CN.UTF-8/' /etc/locale.gen && locale-gen && echo 'LANG=en_US.UTF-8' > /etc/locale.conf && exit"
+	arch-chroot /mnt /bin/bash -c "ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && hwclock --systohc && sed -i 's/#en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen && sed -i 's/#zh_CN.UTF-8/zh_CN.UTF-8/' /etc/locale.gen && locale-gen && echo 'LANG=en_US.UTF-8' > /etc/locale.conf && exit"
 
 	echo -e "Setting up Hostname\n"
-	arch-chroot /mnt bash -c "echo $hname > /etc/hostname && echo 127.0.0.1	$hname > /etc/hosts && echo ::1	$hname >> /etc/hosts && echo 127.0.1.1	$hname.localdomain	$hname >> /etc/hosts && exit"
+	arch-chroot /mnt /bin/bash -c "echo $hname > /etc/hostname && echo 127.0.0.1	$hname > /etc/hosts && echo ::1	$hname >> /etc/hosts && echo 127.0.1.1	$hname.localdomain	$hname >> /etc/hosts && exit"
 
 	echo "Set Root password"
-	arch-chroot /mnt bash -c "passwd && useradd --create-home $uname && echo 'set user password' && passwd $uname && groupadd sudo && gpasswd -a $uname sudo && EDITOR=vim visudo && exit"
+	arch-chroot /mnt /bin/bash -c "passwd && useradd --create-home $uname && echo 'set user password' && passwd $uname && groupadd sudo && gpasswd -a $uname sudo && EDITOR=vim visudo && exit"
+
+    echo -e "enabling openssh services...\n"
+	arch-chroot /mnt /bin/bash -c "systemctl enable openssh && exit"
 
 	echo -e "enabling services...\n"
-	arch-chroot /mnt bash -c "systemctl enable bluetooth && exit"
-	arch-chroot /mnt bash -c "systemctl enable NetworkManager && exit"
+	arch-chroot /mnt /bin/bash -c "systemctl enable NetworkManager && exit"
 	
 	echo -e "enabling paccache timer...\n"
-	arch-chroot /mnt bash -c "systemctl enable paccache.timer && exit"
+	arch-chroot /mnt /bin/bash -c "systemctl enable paccache.timer && exit"
 
 	echo -e "Editing configuration files...\n"
 	# Enabling multilib in pacman
-	arch-chroot /mnt bash -c "sed -i '93s/#\[/\[/' /etc/pacman.conf && sed -i '94s/#I/I/' /etc/pacman.conf && pacman -Syu && sleep 1 && exit"
+	arch-chroot /mnt /bin/bash -c "sed -i '93s/#\[/\[/' /etc/pacman.conf && sed -i '94s/#I/I/' /etc/pacman.conf && pacman -Syu && sleep 1 && exit"
 	# Tweaking pacman, uncomment options Color, TotalDownload and VerbosePkgList
-	arch-chroot /mnt bash -c "sed -i '34s/#C/C/' /etc/pacman.conf && sed -i '35s/#T/T/' /etc/pacman.conf && sed -i '37s/#V/V/' /etc/pacman.conf && sleep 1 && exit"
-
-	cont
+	arch-chroot /mnt /bin/bash -c "sed -i '34s/#C/C/' /etc/pacman.conf && sed -i '35s/#T/T/' /etc/pacman.conf && sed -i '37s/#V/V/' /etc/pacman.conf && sleep 1 && exit"
 }
 
 function install_gnome {
 	pacstrap /mnt gnome gnome-tweaks papirus-icon-theme
-	arch-chroot /mnt bash -c "systemctl enable gdm && exit"
+	arch-chroot /mnt /bin/bash -c "systemctl enable gdm && exit"
 	# Editing gdm's config for disabling Wayland as it does not play nicely with Nvidia
-	arch-chroot /mnt bash -c "sed -i 's/#W/W/' /etc/gdm/custom.conf && exit"
+	arch-chroot /mnt /bin/bash -c "sed -i 's/#W/W/' /etc/gdm/custom.conf && exit"
 }
 
 function install_deepin {
 	pacstrap /mnt deepin lightdm gedit
-	arch-chroot /mnt bash -c "systemctl enable lightdm && exit"
+	arch-chroot /mnt /bin/bash -c "systemctl enable lightdm && exit"
 }
 
 function install_kde {
 	pacstrap /mnt xorg plasma sddm
-	arch-chroot /mnt bash -c "systemctl enable sddm && exit"
+	arch-chroot /mnt /bin/bash -c "systemctl enable sddm && exit"
 	pacstrap /mnt ark dolphin ffmpegthumbs gwenview kaccounts-integration kate kdialog kio-extras konsole ksystemlog okular print-manager
 }
 
@@ -162,7 +144,6 @@ function de {
 		*)
 			;;
 	esac
-	cont
 }
 
 function graphics {
@@ -170,7 +151,7 @@ function graphics {
 	ttf-hannom noto-fonts noto-fonts-extra noto-fonts-emoji noto-fonts-cjk adobe-source-code-pro-fonts adobe-source-sans-fonts adobe-source-serif-fonts adobe-source-han-sans-cn-fonts \
 	adobe-source-han-sans-hk-fonts adobe-source-han-sans-tw-fonts adobe-source-han-serif-cn-fonts wqy-zenhei wqy-microhei
 
-	arch-chroot /mnt bash -c 'sed -i s/#export FREETYPE_PROPERTIES="truetype:interpreter-version=40"/export FREETYPE_PROPERTIES="truetype:interpreter-version=40"/ /etc/profile.d/freetype2.sh' 
+	arch-chroot /mnt /bin/bash -c 'sed -i s/#export/export/ /etc/profile.d/freetype2.sh' 
 }
 
 function installation {
@@ -193,6 +174,7 @@ function main {
 read -r -p "Are you ready? [Y/s]" starti
 case "$starti" in
 	[yY][eE][sS]|[yY])
+		echo "Let's go!"
 		main
 		;;
 	*)
