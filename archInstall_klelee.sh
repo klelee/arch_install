@@ -28,7 +28,7 @@ function set_time {
 
 function partion {
 	read -r -p "Do you want to do partioning? [y/N] " is_partioning
-	case "is_partioning" in 
+	case $is_partioning in 
 		[yY][eE][sS]|[yY])
 			echo "cfdisk will be used partioning! "
 			echo "You need to set a EFI partition with 300M disk space! "
@@ -49,12 +49,12 @@ function fs_format {
 			lsblk
 
 			read -r -p "Which is your root partition(example /dev/sda2)? " rootp
-			make.xfs $rootp
+			mkfs.xfs -f $rootp
 			mount $rootp /mnt
-			mkdir /mnt/boot/efi
+			mkdir -p /mnt/boot/efi
 
 			read -r -p "Which is your EFI partition(example /dev/sda1)? " EFIp
-			make.vfat $EFIp
+			mkfs.vfat $EFIp
 			mount $EFIp /mnt/boot/efi
 			;;
 		*)
@@ -67,26 +67,27 @@ function base_install {
 	echo "Starting installation of packages in selected root drive..."
 	sleep 1
 	pacstrap /mnt \
-				base \    # ArchLinux 运行所需的基础软件包集合
-				diffutils \    # 用来更新RecyclerView的工具，使用DiffUtils可以代替手动刷新RecyclerView
-				linux \    # Linux 内核
-				linux-firmware \    # Linux 设备驱动集合，包含了绝大多数设备的驱动（固件）。
-				logrotate \    # 日志切割工具，推荐安装
-				usbutils \    # 查看USB设备信息的工具
-				which \    # which指令会在path变量指定的路径中，搜索某个系统命令的位置，并且返回第一个搜索结果
-				base-devel \    # 常用的开发工具
-				networkmanager \    # 网络管理器
-				sudo \    # 用于普通用户获取 root 权限
-				bash-completion \    # 支持bash自动补齐
-				git \    # 分布式代码管理工具
-				vim \    # 最强的文本编辑器
-				exfat-utils \    # exfat 文件系统支持
-				ntfs-3g \    # 支持ntfs文件系统
-				grub \    # 系统引导工具
-				os-prober \    # 用于检测一组驱动器上的其他操作系统的实用程序
-				efibootmgr \    # 生成efi文件工具
-				pacman-contrib \    # pacman 包管理器使用脚本
-				intel-ucode \    # Intel 的 CPU 微码更新，用于修补 CPU 漏洞。
+				base diffutils linux linux-firmware logrotate usbutils which base-devel networkmanager sudo bash-completion git vim exfat-utils ntfs-3g grub os-prober efibootmgr pacman-contrib intel-ucode\    
+                # base：ArchLinux 运行所需的基础软件包集合
+				# diffutils:用来更新RecyclerView的工具，使用DiffUtils可以代替手动刷新RecyclerView
+				# linux:Linux 内核
+				# linux-firmware:Linux 设备驱动集合，包含了绝大多数设备的驱动（固件）。
+				# logrotate:日志切割工具，推荐安装
+				# usbutils:查看USB设备信息的工具
+				# which:which指令会在path变量指定的路径中，搜索某个系统命令的位置，并且返回第一个搜索结果
+				# base-devel:常用的开发工具
+				# 网络管理器
+				# sudo 用于普通用户获取 root 权限
+				# bash-completion支持bash自动补齐
+				# git分布式代码管理工具
+				# vim最强的文本编辑器
+				# exfat-utils:exfat 文件系统支持
+				# ntfs-3g:支持ntfs文件系统
+				# grub:系统引导工具
+			    # os-prober:用于检测一组驱动器上的其他操作系统的实用程序
+				# efibootmgr:生成efi文件工具
+				# pacman-contrib:pacman 包管理器使用脚本
+				# intel-ucode：Intel 的 CPU 微码更新，用于修补 CPU 漏洞。
 	genfstab -U /mnt >> /mnt/etc/fstab
 	cont
 }
