@@ -111,6 +111,7 @@ function archroot {
 	arch-chroot /mnt /bin/bash -c "sed -i '93s/#\[/\[/' /etc/pacman.conf && sed -i '94s/#I/I/' /etc/pacman.conf && pacman -Syu && sleep 1 && exit"
 	# Tweaking pacman, uncomment options Color, TotalDownload and VerbosePkgList
 	arch-chroot /mnt /bin/bash -c "sed -i '34s/#C/C/' /etc/pacman.conf && sed -i '35s/#T/T/' /etc/pacman.conf && sed -i '37s/#V/V/' /etc/pacman.conf && sleep 1 && exit"
+
 }
 
 function install_gnome {
@@ -128,7 +129,7 @@ function install_deepin {
 function install_kde {
 	pacstrap /mnt xorg plasma sddm
 	arch-chroot /mnt /bin/bash -c "systemctl enable sddm && exit"
-	pacstrap /mnt ark dolphin ffmpegthumbs gwenview kaccounts-integration kate kdialog kio-extras konsole ksystemlog okular print-manager
+	pacstrap /mnt ark dolphin ffmpegthumbs gwenview kaccounts-integration kate kdialog kio-extras konsole ksystemlog okular print-manager spectacle
 }
 
 function de {
