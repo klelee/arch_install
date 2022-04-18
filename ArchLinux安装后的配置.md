@@ -57,6 +57,16 @@ cd oh-my-bash/tools
 
 ![image-20220417165101670](https://klelee-image.oss-cn-qingdao.aliyuncs.com/image/image-20220417165101670.png)
 
+### QQ和微信方案
+
+腾讯真的是中国Linux系统发展道路上最大的绊脚石，虽然现在已经有了QQ和微信的原生版本，但仅仅是有了而已。所以我还是在使用wine。
+
+- 微信：`yay -S deepin-wine-wechat`
+
+  微信可能会出现字体呈现方框的问题，只需要将`fake_simsun.ttc`字体放在`/.deepinwine/Deepin-WeChat/drive_c/windows/Fonts`目录下。这个字体我会放在[arch_install](https://gitee.com/klelee/arch_install)仓库里
+
+- QQ：`yay -S com.qq.im.deepin`
+
 持续更新~
 
 
