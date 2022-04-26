@@ -130,6 +130,16 @@ EFI分区当然选择，EFI System
 
 输入你的主机名：比如我：`arch`
 
+为root用户和普通用户设置密码
+
+为普通用户设置sudo权限：需要使用vim取消注释下面这行：
+
+```
+# %wheel ALL=(ALL) ALL
+```
+
+
+
 #### Choose a Desktop Environment to install
 
 选择一个你想安装的桌面环境，比如安装KDE：输入`3`继续

@@ -94,10 +94,10 @@ function archroot {
 	echo "Set Root password"
 	arch-chroot /mnt /bin/bash -c "passwd && useradd --create-home $uname && echo 'set user password' && passwd $uname && groupadd sudo && gpasswd -a $uname sudo && EDITOR=vim visudo && exit"
 
-    echo -e "Set user sudo..."
-    arch-chroot /mnt /bin/bash -c "usermod -aG wheel,users,storage,power,lp,adm,optical $uname && exit"
+        echo -e "Set user sudo..."
+        arch-chroot /mnt /bin/bash -c "usermod -aG wheel,users,storage,power,lp,adm,optical $uname && exit"
 
-    echo -e "enabling openssh services...\n"
+        echo -e "enabling openssh services...\n"
 	arch-chroot /mnt /bin/bash -c "systemctl enable sshd && exit"
 
 	echo -e "enabling services...\n"
