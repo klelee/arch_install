@@ -181,7 +181,7 @@ function installation {
 }
 
 function main {
-	Installation
+	installation
 }
 
 echo "arch yyds!"
