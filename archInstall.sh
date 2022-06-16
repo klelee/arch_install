@@ -1,12 +1,12 @@
 #!/bin/bash
 
 function set_var {
-	read -r -p "which disk do you want to install archlinux on？ (example /dev/sda)? " disk
 	read -r -p "Enter the username: " uname
 	read -r -p "Enter the hostname that is your system's name: " hname
 	echo -e "Choose a Desktop Environment to install: \n"
 	echo -e "1. GNOME \n2. Deepin \n3. KDE \n4. i3wm \n5. null"
 	read -r -p "DE: " desktop
+	read -r -p "which disk do you want to install archlinux on？ (example /dev/sda)? " disk
 }
 
 function set_mirrorlist {
@@ -181,7 +181,7 @@ function installation {
 }
 
 function main {
-	Installation
+	installation
 }
 
 echo "arch yyds!"
