@@ -113,7 +113,7 @@ function archroot {
 	# Enabling multilib in pacman
 	arch-chroot /mnt /bin/bash -c "sed -i '93s/#\[/\[/' /etc/pacman.conf && sed -i '94s/#I/I/' /etc/pacman.conf && pacman -Syu && sleep 1 && exit"
 	# Tweaking pacman, uncomment options Color, TotalDownload and VerbosePkgList
-	arch-chroot /mnt /bin/bash -c "sed -i '34s/#C/C/' /etc/pacman.conf && sed -i '35s/#T/T/' /etc/pacman.conf && sed -i '37s/#V/V/' /etc/pacman.conf && sleep 1 && exit"
+	arch-chroot /mnt /bin/bash -c "sed -i 's/^#Color/Color/' /etc/pacman.conf && sed -i 's/^#VerbosePkgLists/VerbosePkgLists/' /etc/pacman.conf && sleep 1 && exit"
 
 	# setting archlinuxcn source
 	arch-chroot /mnt /bin/bash -c "echo [archlinuxcn] >> /etc/pacman.conf && exit"
@@ -140,7 +140,7 @@ function install_kde {
 }
 
 function install_i3wm {
-	pacstrap /mnt xorg i3-gaps i3blocks i3lock i3status dmenu rofi feh thunar xfce4-terminal xfce4-power-manager compton network-manager-applet
+	pacstrap /mnt xorg xorg-xinit i3-gaps i3blocks i3lock i3status dmenu rofi feh thunar xfce4-terminal xfce4-power-manager compton network-manager-applet
 	arch-chroot /mnt /bin/bash -c "cp /etc/X11/xinit/xinitrc /home/${uname}/.xinitrc && exit"
 	arch-chroot /mnt /bin/bash -c "sed -i '$d' /home/${uname}/.xinitrc && sed -i '$d' /home/${uname}/.xinitrc && sed -i '$d' /home/${uname}/.xinitrc && sed -i '$d' /home/${uname}/.xinitrc && sed -i '$d' /home/${uname}/.xinitrc && exit "
 	arch-chroot /mnt /bin/bash -c "echo 'exec i3' >> /home/${uname}/.xinitrc && exit "
