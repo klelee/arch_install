@@ -64,7 +64,7 @@ function base_install {
 				# base-devel:常用的开发工具
 				# 网络管理器
 				# sudo 用于普通用户获取 root 权限
-				# /bin/bash-completion支持/bin/bash自动补齐
+				# bash-completion支持bash自动补齐
 				# git分布式代码管理工具
 				# vim最强的文本编辑器
 				# exfat-utils:exfat 文件系统支持
