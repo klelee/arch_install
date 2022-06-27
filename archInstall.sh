@@ -53,7 +53,7 @@ function set_time {
 function base_install {
 	echo "Starting installation of packages in selected root drive..."
 	sleep 1
-	pacstrap /mnt base diffutils linux linux-firmware logrotate usbutils which base-devel networkmanager sudo bash-completion git vim exfat-utils ntfs-3g grub os-prober efibootmgr pacman-contrib intel-ucode openssh
+	pacstrap /mnt base diffutils linux linux-firmware logrotate usbutils which base-devel networkmanager sudo bash-completion git vim exfat-utils ntfs-3g grub os-prober efibootmgr pacman-contrib intel-ucode openssh haveged
                 # base：ArchLinux 运行所需的基础软件包集合
 				# diffutils:用来更新RecyclerView的工具，使用DiffUtils可以代替手动刷新RecyclerView
 				# linux:Linux 内核
@@ -74,6 +74,7 @@ function base_install {
 				# efibootmgr:生成efi文件工具
 				# pacman-contrib:pacman 包管理器使用脚本
 				# intel-ucode：Intel 的 CPU 微码更新，用于修补 CPU 漏洞。
+				# 解决系统熵过低导致archlinuxcn-keyring安装报错的问题
 	genfstab -U /mnt >> /mnt/etc/fstab
 }
 
@@ -111,6 +112,10 @@ function archroot {
 	# Tweaking pacman, uncomment options Color, TotalDownload and VerbosePkgList
 	arch-chroot /mnt /bin/bash -c "sed -i '34s/#C/C/' /etc/pacman.conf && sed -i '35s/#T/T/' /etc/pacman.conf && sed -i '37s/#V/V/' /etc/pacman.conf && sleep 1 && exit"
 
+	# setting archlinuxcn source
+	arch-chroot /mnt /bin/bash -c "echo [archlinuxcn] >> /etc/pacman.conf && exit"
+	arch-chroot /mnt /bin/bash -c "echo 'Server = https://mirrors.bfsu.edu.cn/archlinuxcn/\$arch' >> /etc/pacman.conf && pacman -Syy && exit"
+	pacstrap /mnt archlinuxcn-keyring
 }
 
 function install_gnome {
@@ -128,7 +133,7 @@ function install_deepin {
 function install_kde {
 	pacstrap /mnt xorg plasma sddm
 	arch-chroot /mnt /bin/bash -c "systemctl enable sddm && exit"
-	pacstrap /mnt ark dolphin ffmpegthumbs gwenview kaccounts-integration kate kdialog kio-extras konsole ksystemlog okular print-manager spectacle
+	pacstrap /mnt ark dolphin ffmpegthumbs gwenview kaccounts-integration kate kdialog kio-extras konsole ksystemlog okular print-manager spectacle yay
 }
 
 function install_i3wm {
