@@ -106,6 +106,9 @@ function archroot {
 	echo -e "enabling paccache timer...\n"
 	arch-chroot /mnt /bin/bash -c "systemctl enable paccache.timer && exit"
 
+	echo -e "enabling haveged ...\n"
+	arch-chroot /mnt /bin/bash -c "systemctl enable haveged && systemctl start haveged && exit"
+
 	echo -e "Editing configuration files...\n"
 	# Enabling multilib in pacman
 	arch-chroot /mnt /bin/bash -c "sed -i '93s/#\[/\[/' /etc/pacman.conf && sed -i '94s/#I/I/' /etc/pacman.conf && pacman -Syu && sleep 1 && exit"
