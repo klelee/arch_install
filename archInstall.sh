@@ -53,7 +53,7 @@ function set_time {
 function base_install {
 	echo "Starting installation of packages in selected root drive..."
 	sleep 1
-	pacstrap /mnt base diffutils linux linux-firmware logrotate usbutils which base-devel networkmanager sudo bash-completion git vim exfat-utils ntfs-3g grub os-prober efibootmgr pacman-contrib intel-ucode openssh haveged
+	pacstrap /mnt base diffutils linux linux-firmware logrotate usbutils which base-devel networkmanager sudo bash-completion git vim exfat-utils ntfs-3g grub os-prober efibootmgr pacman-contrib intel-ucode openssh
                 # base：ArchLinux 运行所需的基础软件包集合
 				# diffutils:用来更新RecyclerView的工具，使用DiffUtils可以代替手动刷新RecyclerView
 				# linux:Linux 内核
@@ -115,10 +115,6 @@ function archroot {
 	# Tweaking pacman, uncomment options Color, TotalDownload and VerbosePkgList
 	arch-chroot /mnt /bin/bash -c "sed -i 's/^#Color/Color/' /etc/pacman.conf && sed -i 's/^#VerbosePkgLists/VerbosePkgLists/' /etc/pacman.conf && sleep 1 && exit"
 
-	# setting archlinuxcn source
-	arch-chroot /mnt /bin/bash -c "echo [archlinuxcn] >> /etc/pacman.conf && exit"
-	arch-chroot /mnt /bin/bash -c "echo 'Server = https://mirrors.bfsu.edu.cn/archlinuxcn/\$arch' >> /etc/pacman.conf && pacman -Syy && exit"
-	pacstrap /mnt archlinuxcn-keyring
 }
 
 function install_gnome {
@@ -136,7 +132,7 @@ function install_deepin {
 function install_kde {
 	pacstrap /mnt xorg plasma sddm
 	arch-chroot /mnt /bin/bash -c "systemctl enable sddm && exit"
-	pacstrap /mnt ark dolphin ffmpegthumbs gwenview kaccounts-integration kate kdialog kio-extras konsole ksystemlog okular print-manager spectacle yay
+	pacstrap /mnt ark dolphin ffmpegthumbs gwenview kaccounts-integration kate kdialog kio-extras konsole ksystemlog okular print-manager spectacle
 }
 
 function install_i3wm {
