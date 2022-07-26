@@ -84,7 +84,6 @@ function install_grub {
 }
 
 function archroot {
-
 	echo -e "Setting up Region and Language\n"
 	arch-chroot /mnt /bin/bash -c "ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && hwclock --systohc && sed -i 's/#en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen && sed -i 's/#zh_CN.UTF-8/zh_CN.UTF-8/' /etc/locale.gen && locale-gen && echo 'LANG=en_US.UTF-8' > /etc/locale.conf && exit"
 
@@ -106,15 +105,9 @@ function archroot {
 	echo -e "enabling paccache timer...\n"
 	arch-chroot /mnt /bin/bash -c "systemctl enable paccache.timer && exit"
 
-	echo -e "enabling haveged ...\n"
-	arch-chroot /mnt /bin/bash -c "systemctl enable haveged && systemctl start haveged && exit"
-
 	echo -e "Editing configuration files...\n"
 	# Enabling multilib in pacman
 	arch-chroot /mnt /bin/bash -c "sed -i '93s/#\[/\[/' /etc/pacman.conf && sed -i '94s/#I/I/' /etc/pacman.conf && pacman -Syu && sleep 1 && exit"
-	# Tweaking pacman, uncomment options Color, TotalDownload and VerbosePkgList
-	arch-chroot /mnt /bin/bash -c "sed -i 's/^#Color/Color/' /etc/pacman.conf && sed -i 's/^#VerbosePkgLists/VerbosePkgLists/' /etc/pacman.conf && sleep 1 && exit"
-
 }
 
 function install_gnome {
@@ -132,7 +125,7 @@ function install_deepin {
 function install_kde {
 	pacstrap /mnt xorg plasma sddm
 	arch-chroot /mnt /bin/bash -c "systemctl enable sddm && exit"
-	pacstrap /mnt ark dolphin ffmpegthumbs gwenview kaccounts-integration kate kdialog kio-extras konsole ksystemlog okular print-manager spectacle
+	pacstrap /mnt ark dolphin gwenview kate konsole ksystemlog print-manager spectacle
 }
 
 function install_i3wm {
