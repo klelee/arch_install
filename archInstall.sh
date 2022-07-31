@@ -32,7 +32,7 @@ function partition {
 	cfdisk $disk
 
 	read -r -p "Would you like to add other patition sach as home and data patition to other disk? " is_setdata
-	case "is_setdata" in
+	case "$is_setdata" in
 		[yY][eE][sS]|[yY])
 			echo "4. If you want to add home(data) partition to other disk. "
 			read -r -p "Please enter your diskname(example /dev/sdb) " ddisk
@@ -53,7 +53,7 @@ function fs_format {
 	mkdir -p /mnt/home
 
 	read -r -p "Do you have swap patition? " is_haveswap
-	case "is_haveswap" in
+	case "$is_haveswap" in
 		[yY][eE][sS]|[yY])
 			read -r -p "Which is your swap partition(example /dev/sda2)? " swapp
 			mkswap $swapp
@@ -68,7 +68,7 @@ function fs_format {
 	mount $EFIp /mnt/boot/efi
 
 	read -r -p "Do you have home(data) patition? " is_havedata
-	case "is_havedata" in
+	case "$is_havedata" in
 		[yY][eE][sS]|[yY])
 			read -r -p "Which is your home(data) patition(example /dev/sdb1)" homep
 			mkfs.xfs -f $homep
@@ -187,7 +187,7 @@ function installation {
 }
 
 function main {
-	setfont ter-132n
+	setfont ter-118n
 	installation
 }
 
