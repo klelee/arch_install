@@ -83,6 +83,7 @@ function fs_format {
 function base_install {
 	echo "Starting installation of packages in selected root drive..."
 	sleep 1
+	pacman -Sy --noconfirm archlinux-keyring
 	pacstrap /mnt base diffutils linux linux-firmware logrotate usbutils which base-devel networkmanager sudo bash-completion git vim exfat-utils ntfs-3g grub os-prober efibootmgr pacman-contrib intel-ucode openssh
 	genfstab -U /mnt >> /mnt/etc/fstab
 }
