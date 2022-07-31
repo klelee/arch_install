@@ -6,41 +6,13 @@ function set_var {
 	echo -e "Choose a Desktop Environment to install: \n"
 	echo -e "1. GNOME \n2. Deepin \n3. KDE \n4. i3wm \n5. null"
 	read -r -p "DE: " desktop
-	read -r -p "which disk do you want to install archlinux on？ (example /dev/sda)? " disk
 }
 
 function set_mirrorlist {
-    systemctl stop reflector
+	systemctl stop reflector
 	echo "Server = https://mirrors.ustc.edu.cn/archlinux/\$repo/os/\$arch" > /etc/pacman.d/mirrorlist
 	echo "set mirrorlist ok!"
 	sleep 1
-}
-
-function partition {
-	echo "Please complete the partition manually !"
-	echo "cfdisk will be used partitioning! Following partition have to set! "
-	echo "1. You need to set a [EFI] partition with 300M disk space! "
-	echo "2. And need to set a [swap] partition with 16G at least! "
-	echo "3. And other partition is [/] . "
-	cfdisk $disk
-}
-
-function fs_format {
-
-	lsblk
-	read -r -p "Which is your root partition(example /dev/sda3)? " rootp
-	mkfs.xfs -f $rootp
-	mount $rootp /mnt
-	mkdir -p /mnt/boot/efi
-
-	read -r -p "Which is your swap partition(example /dev/sda2)? " swapp
-	mkswap $swapp
-	swapon $swapp
-
-	read -r -p "Which is your EFI partition(example /dev/sda1)? " EFIp
-	mkfs.vfat $EFIp
-	mount $EFIp /mnt/boot/efi
-
 }
 
 function set_time {
@@ -50,31 +22,67 @@ function set_time {
 	sleep 1
 }
 
+function partition {
+	echo "Please complete the partition manually !"
+	echo "cfdisk will be used partitioning! Following partition have to set! "
+	echo "1. You need to set a [EFI] partition with 300M disk space! "
+	echo "2. And need to set a [swap] partition with 16G at least! sure, you can no swap patition"
+	echo "3. And other partition is [/] . "
+	read -r -p "which disk do you want to install archlinux on？ (example /dev/sda) " disk
+	cfdisk $disk
+
+	read -r -p "Would you like to add other patition sach as home and data patition to other disk? " is_setdata
+	case "is_setdata" in
+		[yY][eE][sS]|[yY])
+			echo "4. If you want to add home(data) partition to other disk. "
+			read -r -p "Please enter your diskname(example /dev/sdb) " ddisk
+			cfdisk $ddisk
+			;;
+		*)
+			;;
+	esac
+}
+
+function fs_format {
+
+	lsblk
+	read -r -p "Which is your root partition(example /dev/sda3)? " rootp
+	mkfs.xfs -f $rootp
+	mount $rootp /mnt
+	mkdir -p /mnt/boot/efi
+	mkdir -p /mnt/home
+
+	read -r -p "Do you have swap patition? " is_haveswap
+	case "is_haveswap" in
+		[yY][eE][sS]|[yY])
+			read -r -p "Which is your swap partition(example /dev/sda2)? " swapp
+			mkswap $swapp
+			swapon $swapp
+			;;
+		*)
+			;;
+
+	read -r -p "Which is your EFI partition(example /dev/sda1)? " EFIp
+	mkfs.vfat $EFIp
+	mount $EFIp /mnt/boot/efi
+
+	read -r -p "Do you have home(data) patition? " is_havedata
+	case "is_havedata" in
+		[yY][eE][sS]|[yY])
+			read -r -p "Which is your home(data) patition(example /dev/sdb1)" homep
+			mkfs.xfs -f $homep
+			mount $homep /mnt/home
+			;;
+		*)
+			;;
+	esac
+
+}
+
 function base_install {
 	echo "Starting installation of packages in selected root drive..."
 	sleep 1
 	pacstrap /mnt base diffutils linux linux-firmware logrotate usbutils which base-devel networkmanager sudo bash-completion git vim exfat-utils ntfs-3g grub os-prober efibootmgr pacman-contrib intel-ucode openssh
-                # base：ArchLinux 运行所需的基础软件包集合
-				# diffutils:用来更新RecyclerView的工具，使用DiffUtils可以代替手动刷新RecyclerView
-				# linux:Linux 内核
-				# linux-firmware:Linux 设备驱动集合，包含了绝大多数设备的驱动（固件）。
-				# logrotate:日志切割工具，推荐安装
-				# usbutils:查看USB设备信息的工具
-				# which:which指令会在path变量指定的路径中，搜索某个系统命令的位置，并且返回第一个搜索结果
-				# base-devel:常用的开发工具
-				# 网络管理器
-				# sudo 用于普通用户获取 root 权限
-				# bash-completion支持bash自动补齐
-				# git分布式代码管理工具
-				# vim最强的文本编辑器
-				# exfat-utils:exfat 文件系统支持
-				# ntfs-3g:支持ntfs文件系统
-				# grub:系统引导工具
-			    # os-prober:用于检测一组驱动器上的其他操作系统的实用程序
-				# efibootmgr:生成efi文件工具
-				# pacman-contrib:pacman 包管理器使用脚本
-				# intel-ucode：Intel 的 CPU 微码更新，用于修补 CPU 漏洞。
-				# 解决系统熵过低导致archlinuxcn-keyring安装报错的问题
 	genfstab -U /mnt >> /mnt/etc/fstab
 }
 
@@ -166,9 +174,9 @@ function de {
 function installation {
 	set_var
 	set_mirrorlist
+	set_time
 	partition
 	fs_format
-	set_time
 	base_install
 	install_grub
 	archroot
@@ -178,6 +186,7 @@ function installation {
 }
 
 function main {
+	setfont ter-132n
 	installation
 }
 
