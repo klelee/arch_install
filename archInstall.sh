@@ -61,6 +61,7 @@ function fs_format {
 			;;
 		*)
 			;;
+	esac
 
 	read -r -p "Which is your EFI partition(example /dev/sda1)? " EFIp
 	mkfs.vfat $EFIp
