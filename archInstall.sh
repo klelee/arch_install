@@ -31,7 +31,7 @@ function partition {
 	read -r -p "which disk do you want to install archlinux on？ (example /dev/sda) " disk
 	cfdisk $disk
 
-	read -r -p "Would you like to add other patition sach as home and data patition to other disk? " is_setdata
+	read -r -p "Would you like to add other patition sach as home and data patition to other disk? [y/n]" is_setdata
 	case "$is_setdata" in
 		[yY][eE][sS]|[yY])
 			echo "4. If you want to add home(data) partition to other disk. "
@@ -52,7 +52,7 @@ function fs_format {
 	mkdir -p /mnt/boot/efi
 	mkdir -p /mnt/home
 
-	read -r -p "Do you have swap patition? " is_haveswap
+	read -r -p "Do you have swap patition? [y/n]" is_haveswap
 	case "$is_haveswap" in
 		[yY][eE][sS]|[yY])
 			read -r -p "Which is your swap partition(example /dev/sda2)? " swapp
@@ -67,7 +67,7 @@ function fs_format {
 	mkfs.vfat $EFIp
 	mount $EFIp /mnt/boot/efi
 
-	read -r -p "Do you have home(data) patition? " is_havedata
+	read -r -p "Do you have home(data) patition? [y/n]" is_havedata
 	case "$is_havedata" in
 		[yY][eE][sS]|[yY])
 			read -r -p "Which is your home(data) patition(example /dev/sdb1)" homep
