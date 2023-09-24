@@ -28,9 +28,11 @@ function partition {
 	echo "1. You need to set a [EFI] partition with 300M disk space! "
 	echo "2. And need to set a [swap] partition with 16G at least! sure, you can no swap patition"
 	echo "3. And other partition is [/] . "
-	read -r -p "which disk do you want to install archlinux on？ (example /dev/sda) " disk
+	lsblk -f
+	read -r -p "which disk do you want to install archlinux on? (example /dev/sda) " disk
 	cfdisk $disk
 
+	lsblk -f
 	read -r -p "Would you like to add other patition sach as home and data patition to other disk? [y/n]" is_setdata
 	case "$is_setdata" in
 		[yY][eE][sS]|[yY])
@@ -45,13 +47,14 @@ function partition {
 
 function fs_format {
 
-	lsblk
+	lsblk -f
 	read -r -p "Which is your root partition(example /dev/sda3)? " rootp
 	mkfs.xfs -f $rootp
 	mount $rootp /mnt
-	mkdir -p /mnt/boot/efi
+	mkdir -p /mnt/boot
 	mkdir -p /mnt/home
 
+	lsblk -f
 	read -r -p "Do you have swap patition? [y/n]" is_haveswap
 	case "$is_haveswap" in
 		[yY][eE][sS]|[yY])
@@ -63,10 +66,12 @@ function fs_format {
 			;;
 	esac
 
+	lsblk -f
 	read -r -p "Which is your EFI partition(example /dev/sda1)? " EFIp
 	mkfs.vfat $EFIp
-	mount $EFIp /mnt/boot/efi
+	mount $EFIp /mnt/boot
 
+	lsblk -f
 	read -r -p "Do you have home(data) patition? [y/n]" is_havedata
 	case "$is_havedata" in
 		[yY][eE][sS]|[yY])
@@ -90,7 +95,7 @@ function base_install {
 
 function install_grub {
 	echo -e "Installing GRUB.."
-	arch-chroot /mnt /bin/bash -c "grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=Arch && grub-mkconfig -o /boot/grub/grub.cfg && exit"
+	arch-chroot /mnt /bin/bash -c "grub-install --target=x86_64-efi --efi-directory=/boot/ --bootloader-id=Arch && grub-mkconfig -o /boot/grub/grub.cfg && exit"
 }
 
 function archroot {
