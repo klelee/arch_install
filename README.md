@@ -176,4 +176,4 @@ EFI分区当然选择，EFI System
 
 我的邮箱：klelee@outlook.com
 
-我的主页：klelee.com(暂时停用)
+我的主页：https://klelee.com
