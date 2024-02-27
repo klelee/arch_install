@@ -1,2 +1,2 @@
-#Archlinux Install
+# Archlinux Install   
 By klelee.
