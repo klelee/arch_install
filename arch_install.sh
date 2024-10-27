@@ -128,8 +128,6 @@ function archroot {
 function install_gnome {
 	pacstrap /mnt gnome gnome-tweaks papirus-icon-theme
 	arch-chroot /mnt /bin/bash -c "systemctl enable gdm && exit"
-	# Editing gdm's config for disabling Wayland as it does not play nicely with Nvidia
-	arch-chroot /mnt /bin/bash -c "sed -i 's/#W/W/' /etc/gdm/custom.conf && exit"
 }
 
 function install_deepin {
